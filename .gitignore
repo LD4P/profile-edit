@@ -1,6 +1,6 @@
 *.zip
+*DS_Store
 source/assets/css/dist/
 source/assets/js/dist/
 source/documentation/
 source/node_modules/
-
