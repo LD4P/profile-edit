@@ -25,42 +25,42 @@ angular.module('locApp.modules.profile', [
         $stateProvider
             .state('profile', {
                 url: '/profile',
-                templateUrl: 'html/profile.html'
+                templateUrl: '/html/profile.html'
             })
             .state('profile.list', {
                 parent: 'profile',
                 url: '/list',
-                templateUrl: 'html/profileList.html',
+                templateUrl: '/html/profileList.html',
                 controller: 'profileListController'
             })
             .state('profile.create', {
                 parent: 'profile',
                 url: '/create',
-                templateUrl: 'html/profileForm.html',
+                templateUrl: '/html/profileForm.html',
                 controller: 'profileController'
             })
             .state('profile.ontologies', {
                 parent: 'profile',
                 url: '/ontologies',
-                templateUrl: 'html/ontologies.html',
+                templateUrl: '/html/ontologies.html',
                 controller: 'ontologiesController'
             })
             .state('profile.ontologies.edit', {
                 parent: 'profile',
                 url: '/ontologies/{id}',
-                templateUrl: 'html/ontologiesForm.html',
+                templateUrl: '/html/ontologiesForm.html',
                 controller: 'ontologiesController'
             })
             .state('profile.ontologies.create', {
                 parent: 'profile',
                 url: '/ontologies/create',
-                templateUrl: 'html/ontologiesForm.html',
+                templateUrl: '/html/ontologiesForm.html',
                 controller: 'ontologiesController'
             })
             .state('profile.edit', {
                 parent: 'profile',
                 url: '/{id}',
-                templateUrl: 'html/profileForm.html',
+                templateUrl: '/html/profileForm.html',
                 controller: 'profileController'
             });
     });
