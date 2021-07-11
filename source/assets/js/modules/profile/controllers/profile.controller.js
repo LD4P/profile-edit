@@ -7,7 +7,7 @@
  */
 angular.module('locApp.modules.profile.controllers')
 
-    .controller('profileController', function($scope, $state, $stateParams, $filter, Alert, Server, FormHandler, ProfileHandler, Vocab, usSpinnerService, localStorageService) {
+    .controller('profileController', function($scope, $state, $stateParams, $filter, $http, Alert, Server, FormHandler, ProfileHandler, Vocab, usSpinnerService, localStorageService) {
 
         $scope.addPage = ($state.current.name === 'profile.create');
 
@@ -28,6 +28,7 @@ angular.module('locApp.modules.profile.controllers')
         $scope.profile = {};
         $scope.profile.resourceTemplates = [];
         $scope.resourceTemplatesBase = [];
+        $scope.propertyTypes = [];
 
         $scope.oldTitle = "";
         $scope.searchText = "";
@@ -55,7 +56,27 @@ angular.module('locApp.modules.profile.controllers')
         $scope.loadCount = 0;
         $scope.loaded = 0;
 
-        
+
+        /**
+         * @ngdoc function
+         * @name checkURL
+         * @description
+         * Check if URI resolves
+        */
+        $scope.checkSourceURI = function() {
+            $scope.profileForm.source.$warn = false;
+            var url = $scope.profile.source
+            $http({
+                method: 'HEAD',
+                url: url
+            })
+            .then(function (response) {
+            }, function (response) {
+                console.log($scope.profile.source + ' did not resolve!')
+                $scope.profileForm.source.$warn = true;
+            });
+
+        };        
         
         $scope.$watch('loaded', function() {
            if($scope.loaded >= $scope.loadCount && $scope.loadCount !== 0) {
@@ -103,6 +124,12 @@ angular.module('locApp.modules.profile.controllers')
                     $scope.titleList.push(response[i].json.Profile.title);
                     $scope.idList.push(response[i].id);
                 }
+            });
+
+        // Get propertyTypes
+        Server.get('/verso/api/configs?filter[where][name]=propertyTypes', {}, true)
+            .then(function(response) {
+                $scope.propertyTypes = response[0].json;
             });
 
         /**
@@ -461,18 +488,18 @@ angular.module('locApp.modules.profile.controllers')
             delete $scope.profile.json;
 
             $scope.profile.json = angular.toJson(jsonObj);
+            var versoJson = angular.fromJson($scope.profile.json);
 
             var versoModel = { 
                 "name": $scope.profile.title,
                 "configType": "profile",
-                "json": $scope.profile.json
+                "json": versoJson
             };
-            versoModelStr = JSON.stringify(versoModel);
 
             var postUrl = ($stateParams.id) ? $stateParams.id + '/replace' : '';
 
             // Save
-            Server.post('/verso/api/configs/' + postUrl, versoModelStr)
+            Server.post('/verso/api/configs/' + postUrl, versoModel)
                 .then(function() {
                     localStorageService.remove('templateRefs');
                     $state.go('profile.list');

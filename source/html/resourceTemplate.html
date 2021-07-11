@@ -9,77 +9,84 @@
                 popover="Resource templates must contain a resource URI and at least one property template"
                 popover-title="Resource Template" popover-trigger="mouseenter"
                 popover-placement="right" style="width: 2em;"></i>
-                
-                
+
+
                 <a id="resourceChoose" class="pull-right" data-toggle="modal" href="#chooseResource" ng-click="updateChosenResource(resourceTemplate, parentList);" onclick="event.returnValue = false; return false;">
                     <i class="fa fa-bars" style="margin-right: 10px;"></i>
                     {{!resourceTemplate.resourceURI ? "Select Resource" : "Change Resource" }}
                 </a>
         </span>
-            
+
     </h4>
 </div>
 
 <div ng-controller="resourceTemplateController" id="resource_{{item}}" class="panel-collapse collapse">
     <div class="panel-body">
-        
+
         <table>
             <tbody>
                 <tr>
                     <td>
-                        <label for="id">ID</label>
+                        <label for="id">ID*</label>
                     </td>
                     <td>
-                        <input name="resourceId" ng-model="resourceTemplate.id"
+                        <input name="resourceId" ng-model="resourceTemplate.id" ng-change="checkID()" required
                                popover="Identifier associated with a resource template"
                                popover-title="Resource ID" popover-trigger="mouseenter"
                                popover-placement="right"/>
+                        <div class="error" ng-show="resourceForm.resourceId.$invalid">
+                            <small class="error">ID not unique</small>
+                        </div>
                     </td>
 
                     <td>
-                        <label for="resourceURI">Resource URI</label>
+                        <label for="resourceURI">Resource URI*</label>
                     </td>
                     <td>
-                       <input  type="url" name="resourceURI" ng-model="resourceTemplate.resourceURI" required
+                        <input  type="url" name="resourceURI" ng-model="resourceTemplate.resourceURI" required
+                               ng-blur="checkURI()"
                                popover="URI of the RDF resource associated with the resource template"
                                popover-title="Resource URI" popover-trigger="mouseenter"
                                popover-placement="left"/>
                         <div class="error" style="display: inline-block;" ng-show="resourceForm.resourceURI.$error.required">
                             <i class="fa fa-warning red"></i>
                         </div>
-                       <div class="error" ng-show="!resourceForm.resourceURI.$error.required && resourceForm.resourceURI.$dirty && resourceForm.resourceURI.$invalid">
-                           <small class="error">uri is invalid</small>
-                       </div>
+                        <div class="error" ng-show="!resourceForm.resourceURI.$error.required && resourceForm.resourceURI.$dirty && resourceForm.resourceURI.$invalid">
+                             <small class="error">uri is invalid</small>
+                        </div>
+                        <div class="warn" ng-show="resourceForm.resourceURI.$warn">
+                            <small class="fa fa-warning red">URI did not resolve!</small>
+                        </div>
                     </td>
                 </tr>
 
                 <tr>
                     <td>
-                       <label for="resourceLabel">Resource Label</label>
+                       <label for="resourceLabel">Resource Label*</label>
                     </td>
                     <td>
-                       <input name="resourceLabel" ng-model="resourceTemplate.resourceLabel" 
-                              popover="Localized label associated with the resource"
+                       <input name="resourceLabel" ng-model="resourceTemplate.resourceLabel"
+                              popover="Localized label associated with the resource template"
                               popover-title="Resource Label" popover-trigger="mouseenter"
                               popover-placement="right"/>
                     </td>
 
                     <td>
-                        <label for="contact">Contact</label>
+                        <label for="rtAuthor">Author*</label>
                     </td>
                     <td>
-                        <input name="contact" ng-model="resourceTemplate.contact"
-                               popover="Contact information associated with the profile"
+                        <input name="rtAuthor" ng-model="resourceTemplate.author"
+                               popover="Contact information associated with the resource template"
                                popover-title="Resource Title" popover-trigger="mouseenter"
                                popover-placement="left"/>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <label for="remark">Guiding statement for the use of this resource</label>
+                        <label for="rtRemark">Guiding statement for the use of this resource</label>
                     </td>
                     <td>
-                        <input name="remark" ng-model="resourceTemplate.remark"
+                        <input name="rtRemark" ng-model="resourceTemplate.remark"
                                 popover="Comment or guiding statement intended to be presented as supplementary information in user display. A common use for this is to notify a user of code lists or schemata associated with the expected value of this resource."
                                 popover-title="Remark" popover-trigger="mouseenter"
                                 popover-placement="right"/>
@@ -89,7 +96,7 @@
         </table>
 
         <div id="propertyTemplates_{{propNest}}" class="propertyTemplates panel-group accordion-simple" ui-sortable="propertySortOption" ng-model="resourceFields">
-            
+
             <div ng-form name="propertyForm" class="panel propertyItem" ng-repeat="resourceField in resourceFields" sss-field item={{resourceField}} html='html/propertyTemplate.html'></div>
             <a href="#" onclick="event.returnValue = false; return false;" ng-click="addProperty()" class="propertyLink sss-add-margin-top">
                 <i class="fa fa-plus"></i>
